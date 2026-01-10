@@ -174,7 +174,8 @@ export default function NewPublicationPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="pfp">PFP Technical Reports</SelectItem>
-                      <SelectItem value="forvac">FORVAC Technical Reports</SelectItem>
+                      <SelectItem value="forvac-technical">FORVAC Technical Reports</SelectItem>
+                      <SelectItem value="forvac-administrative-and-management">FORVAC Administrative & Management Reports</SelectItem>
                       <SelectItem value="forland-admin">FORLAND - Admin & Financial Reports</SelectItem>
                       <SelectItem value="forland-technical">FORLAND - Project Technical Report</SelectItem>
                       <SelectItem value="forland-forms">FORLAND - Forms and Guidelines</SelectItem>

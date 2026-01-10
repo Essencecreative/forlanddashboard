@@ -15,7 +15,9 @@ import {
   NewspaperIcon,
   RadioIcon,
   Settings,
+  Sliders,
   Users,
+  Youtube,
 } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
 import {
@@ -38,7 +40,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/t
 
 export default function DashboardSidebar() {
   const { pathname } = useLocation()
-  const [openMenus, setOpenMenus] = useState<string[]>(["publications", "forland-reports", "news-events"]) // Default open menus
+  const [openMenus, setOpenMenus] = useState<string[]>(["publications", "forland-reports", "forvac-reports", "news-events"]) // Default open menus
 
   const toggleMenu = (menuId: string) => {
     setOpenMenus((prev) => (prev.includes(menuId) ? prev.filter((id) => id !== menuId) : [...prev, menuId]))
@@ -104,6 +106,26 @@ export default function DashboardSidebar() {
                 </Link>
               </SidebarMenuItem>
 
+              {/* Home Slider Menu Item */}
+              <SidebarMenuItem>
+                <Link to="/home-slider">
+                  <SidebarMenuButton isActive={isActive("/home-slider")}>
+                    <Sliders className="h-4 w-4" />
+                    <span>Home Slider</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+
+              {/* YouTube Videos Menu Item */}
+              <SidebarMenuItem>
+                <Link to="/youtube-videos">
+                  <SidebarMenuButton isActive={isActive("/youtube-videos")}>
+                    <Youtube className="h-4 w-4" />
+                    <span>YouTube Videos</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+
               {/* Publications Menu with Submenu */}
               <Collapsible
                 className="w-full"
@@ -133,13 +155,39 @@ export default function DashboardSidebar() {
                       </Link>
                     </SidebarMenuSubItem>
 
-                    <SidebarMenuSubItem>
-                      <Link to="/publications?category=forvac">
-                        <SidebarMenuSubButton>
-                          FORVAC Technical Reports
-                        </SidebarMenuSubButton>
-                      </Link>
-                    </SidebarMenuSubItem>
+                    {/* FORVAC Reports Submenu */}
+                    <Collapsible
+                      className="w-full"
+                      open={isMenuOpen("forvac-reports")}
+                      onOpenChange={() => toggleMenu("forvac-reports")}
+                    >
+                      <SidebarMenuSubItem>
+                        <CollapsibleTrigger className="w-full" asChild>
+                          <SidebarMenuSubButton>
+                            FORVAC Reports
+                            <ChevronDown
+                              className={`ml-auto h-3 w-3 shrink-0 transition-transform duration-200 ${
+                                isMenuOpen("forvac-reports") ? "rotate-180" : ""
+                              }`}
+                            />
+                          </SidebarMenuSubButton>
+                        </CollapsibleTrigger>
+                      </SidebarMenuSubItem>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="border-l-0 pl-2">
+                          <SidebarMenuSubItem>
+                            <Link to="/publications?category=forvac&subcategory=technical">
+                              <TruncatedMenuItem text="FORVAC Technical Reports" />
+                            </Link>
+                          </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <Link to="/publications?category=forvac&subcategory=admin">
+                              <TruncatedMenuItem text="FORVAC Administrative & Management Reports" />
+                            </Link>
+                          </SidebarMenuSubItem>
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </Collapsible>
 
                     {/* FORLAND Reports Submenu */}
                     <Collapsible
@@ -246,17 +294,39 @@ export default function DashboardSidebar() {
                         </SidebarMenuSubButton>
                       </Link>
                     </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <Link to="/news-and-events?category=gallery">
-                        <SidebarMenuSubButton className="flex items-center gap-1.5">
-                          <ImageIcon className="h-3.5 w-3.5 text-amber-500" />
-                          Photo Gallery
-                        </SidebarMenuSubButton>
-                      </Link>
-                    </SidebarMenuSubItem>
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </Collapsible>
+
+              {/* Photo Gallery Menu Item */}
+              <SidebarMenuItem>
+                <Link to="/gallery">
+                  <SidebarMenuButton isActive={isActive("/gallery")}>
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Photo Gallery</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+
+              {/* Gallery Categories Menu Item */}
+              <SidebarMenuItem>
+                <Link to="/gallery-categories">
+                  <SidebarMenuButton isActive={isActive("/gallery-categories")}>
+                    <Layers className="h-4 w-4" />
+                    <span>Gallery Categories</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+
+              {/* Banners Menu Item */}
+              <SidebarMenuItem>
+                <Link to="/banners">
+                  <SidebarMenuButton isActive={isActive("/banners")}>
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Banners</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
 
               <Collapsible
                 className="w-full"
@@ -297,6 +367,16 @@ export default function DashboardSidebar() {
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </Collapsible>
+              {/* Organization Structure Menu Item */}
+              <SidebarMenuItem>
+                <Link to="/organization-structure">
+                  <SidebarMenuButton isActive={isActive("/organization-structure")}>
+                    <BarChart3 className="h-4 w-4" />
+                    <span>Organization Structure</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+
               {/* Team Members Menu Item */}
               <SidebarMenuItem>
                 <Link to="/team">

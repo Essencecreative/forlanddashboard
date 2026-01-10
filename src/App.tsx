@@ -20,6 +20,20 @@ import NewUserPage from './components/users-new';
 import EditPublicationPage from './components/publicationedit';
 import EditNewsEventPage from './components/news-edit';
 import EditTeamMemberPage from './components/team-edit';
+import HomeSliderPage from './components/home-slider';
+import NewHomeSliderPage from './components/home-slider-new';
+import EditHomeSliderPage from './components/home-slider-edit';
+import YouTubeVideosPage from './components/youtube-videos';
+import NewYouTubeVideoPage from './components/youtube-videos-new';
+import EditYouTubeVideoPage from './components/youtube-videos-edit';
+import GalleryPage from './components/gallery';
+import GalleryCategoriesPage from './components/gallery-categories';
+import OrganizationStructurePage from './components/organization-structure';
+import OrganizationStructureNewPage from './components/organization-structure-new';
+import OrganizationStructureEditPage from './components/organization-structure-edit';
+import BannersPage from './components/banners';
+import BannersNewPage from './components/banners-new';
+import BannersEditPage from './components/banners-edit';
 
 function App() {
   return (
@@ -151,6 +165,118 @@ function App() {
         element={
           <ProtectedRoute>
             <EditTeamMemberPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home-slider"
+        element={
+          <ProtectedRoute>
+            <HomeSliderPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home-slider/new"
+        element={
+          <ProtectedRoute>
+            <NewHomeSliderPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home-slider/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditHomeSliderPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/youtube-videos"
+        element={
+          <ProtectedRoute>
+            <YouTubeVideosPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/youtube-videos/new"
+        element={
+          <ProtectedRoute>
+            <NewYouTubeVideoPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/youtube-videos/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditYouTubeVideoPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gallery"
+        element={
+          <ProtectedRoute>
+            <GalleryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gallery-categories"
+        element={
+          <ProtectedRoute>
+            <GalleryCategoriesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organization-structure"
+        element={
+          <ProtectedRoute>
+            <OrganizationStructurePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organization-structure/new"
+        element={
+          <ProtectedRoute>
+            <OrganizationStructureNewPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organization-structure/:id/edit"
+        element={
+          <ProtectedRoute>
+            <OrganizationStructureEditPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/banners"
+        element={
+          <ProtectedRoute>
+            <BannersPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/banners/new"
+        element={
+          <ProtectedRoute>
+            <BannersNewPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/banners/:id/edit"
+        element={
+          <ProtectedRoute>
+            <BannersEditPage />
           </ProtectedRoute>
         }
       />

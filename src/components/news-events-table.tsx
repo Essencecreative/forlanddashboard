@@ -1,10 +1,10 @@
 // src/components/NewsEventsTable.tsx
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { Link, useSearchParams } from "react-router"
 import {
-  ArrowDownIcon, ArrowUpIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon,
-  ExternalLinkIcon, ImageIcon, MicIcon, NewspaperIcon, RadioIcon,
-  SearchIcon, UsersIcon, PlusIcon, EditIcon, Trash2Icon, XIcon
+  CalendarIcon, ChevronLeftIcon, ChevronRightIcon,
+  ImageIcon, NewspaperIcon, RadioIcon,
+  SearchIcon, UsersIcon, PlusIcon, EditIcon, Trash2Icon
 } from "lucide-react"
 import { format } from "date-fns"
 import { Button } from "./ui/button"
@@ -19,8 +19,6 @@ import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle,
   DialogDescription
 } from "./ui/dialog"
-import { Label } from "./ui/label"
-import { Textarea } from "./ui/textarea"
 
 const categoryOptions = [
   { value: "all", label: "All Categories" },
@@ -28,7 +26,6 @@ const categoryOptions = [
   { value: "General News", label: "General News" },
   { value: "Events and Trainings", label: "Events and Trainings" },
   { value: "Radio Programmes", label: "Radio Programmes" },
-  { value: "Photo Gallery", label: "Photo Gallery" },
 ]
 
 const getCategoryIcon = (category: string) => {
@@ -37,7 +34,6 @@ const getCategoryIcon = (category: string) => {
     case "General News": return <NewspaperIcon className="h-4 w-4 text-gray-500" />
     case "Events and Trainings": return <UsersIcon className="h-4 w-4 text-green-500" />
     case "Radio Programmes": return <RadioIcon className="h-4 w-4 text-purple-500" />
-    case "Photo Gallery": return <ImageIcon className="h-4 w-4 text-amber-500" />
     default: return <NewspaperIcon className="h-4 w-4" />
   }
 }
@@ -48,151 +44,29 @@ const getCategoryVariant = (category: string): "default" | "outline" | "secondar
     case "General News": return "secondary"
     case "Events and Trainings": return "outline"
     case "Radio Programmes": return "destructive"
-    case "Photo Gallery": return "secondary"
     default: return "default"
   }
 }
 
-/* ---------- GALLERY UPLOADER ---------- */
-const GalleryUploader = ({
-  onSuccess,
-}: {
-  onSuccess: () => void
-}) => {
-  const { token } = useAuth()
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [files, setFiles] = useState<File[]>([])
-  const [uploading, setUploading] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!title || files.length === 0) return
-
-    setUploading(true)
-    const form = new FormData()
-    form.append("title", title)
-    form.append("description", description)
-    files.forEach(f => form.append("photos", f))
-
-    try {
-      const res = await fetch("https://forlandservice.onrender.com/gallery", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: form,
-      })
-      if (!res.ok) throw new Error("Upload failed")
-      setTitle("")
-      setDescription("")
-      setFiles([])
-      if (fileInputRef.current) fileInputRef.current.value = ""
-      onSuccess()
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setUploading(false)
-    }
-  }
-
-  return (
-    <Card className="p-6 mb-6">
-      <h3 className="text-lg font-semibold mb-4">Add New Gallery</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="g-title">Title</Label>
-          <Input
-            id="g-title"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            placeholder="e.g. Summer Camp 2025"
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="g-desc">Description (optional)</Label>
-          <Textarea
-            id="g-desc"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            placeholder="Short description of the gallery"
-            rows={3}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="g-photos">Photos (up to 10)</Label>
-          <Input
-            ref={fileInputRef}
-            id="g-photos"
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={e => {
-              const selected = Array.from(e.target.files || [])
-              if (selected.length + files.length > 10) {
-                alert("Maximum 10 photos allowed")
-                return
-              }
-              setFiles(prev => [...prev, ...selected])
-            }}
-          />
-          {files.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {files.map((f, i) => (
-                <div key={i} className="relative group">
-                  <img
-                    src={URL.createObjectURL(f)}
-                    alt={f.name}
-                    className="h-20 w-20 object-cover rounded border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setFiles(prev => prev.filter((_, idx) => idx !== i))}
-                    className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
-                  >
-                    <XIcon className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <Button type="submit" disabled={uploading || !title || files.length === 0}>
-          {uploading ? "Uploading…" : "Upload Gallery"}
-        </Button>
-      </form>
-    </Card>
-  )
-}
-
-/* ---------- MAIN COMPONENT ---------- */
 export default function NewsEventsTable() {
   const { token } = useAuth()
   const [searchParams] = useSearchParams()
   const urlCategory = searchParams.get("category")?.trim() || "all"
 
-  // ----- COMMON STATES -----
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState(urlCategory)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [loading, setLoading] = useState(true)
-
-  // ----- DATA STATES -----
-  const [newsItems, setNewsItems] = useState<any[]>([])          // normal publications
-  const [galleryItems, setGalleryItems] = useState<any[]>([])    // galleries
+  const [newsItems, setNewsItems] = useState<any[]>([])
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const itemsPerPage = 5
 
-  // ----- FETCH LOGIC -----
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
-
-      // 1. Normal publications (always fetch, we filter later)
       try {
         const res = await fetch(
           `https://forlandservice.onrender.com/news?page=${currentPage}&limit=${itemsPerPage}`,
@@ -201,27 +75,16 @@ export default function NewsEventsTable() {
         const data = await res.json()
         setNewsItems(data.news || [])
         setTotalPages(data.totalPages || 1)
-      } catch (e) { console.error(e) }
-
-      // 2. Gallery items (only when we are in gallery mode)
-      if (selectedCategory === "Photo Gallery") {
-        try {
-          const res = await fetch(
-            `https://forlandservice.onrender.com/gallery?page=${currentPage}&limit=${itemsPerPage}`
-          )
-          const data = await res.json()
-          setGalleryItems(data.galleries || [])
-          setTotalPages(data.totalPages || 1)
-        } catch (e) { console.error(e) }
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setLoading(false)
       }
-
-      setLoading(false)
     }
 
     fetchData()
   }, [token, currentPage, selectedCategory])
 
-  // ----- FILTERED LIST -----
   const filteredNews = newsItems.filter((item: any) => {
     const matchesSearch =
       item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -230,36 +93,15 @@ export default function NewsEventsTable() {
     return matchesSearch && matchesCategory
   })
 
-  const filteredGalleries = galleryItems.filter((g: any) => {
-    const matchesSearch =
-      g.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      g.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesSearch
-  })
-
-  const displayItems = selectedCategory === "Photo Gallery" ? filteredGalleries : filteredNews
-
-  // ----- DELETE HANDLERS -----
-  const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [deleting, setDeleting] = useState(false)
-
-  const handleDelete = async (id: string, isGallery: boolean) => {
+  const handleDelete = async (id: string) => {
     setDeleting(true)
-    const endpoint = isGallery
-      ? `https://forlandservice.onrender.com/gallery/${id}`
-      : `https://forlandservice.onrender.com/news/${id}`
-
     try {
-      const res = await fetch(endpoint, {
+      const res = await fetch(`https://forlandservice.onrender.com/news/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) throw new Error("Delete failed")
-      if (isGallery) {
-        setGalleryItems(prev => prev.filter(i => i._id !== id))
-      } else {
-        setNewsItems(prev => prev.filter(i => i._id !== id))
-      }
+      setNewsItems(prev => prev.filter(i => i._id !== id))
       setDeleteId(null)
     } catch (e) {
       console.error(e)
@@ -268,12 +110,9 @@ export default function NewsEventsTable() {
     }
   }
 
-  // ----- GALLERY PREVIEW DIALOG -----
-  const [previewGallery, setPreviewGallery] = useState<any>(null)
-
   return (
     <div className="space-y-4">
-      {/* ---------- HEADER ---------- */}
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="relative w-full max-w-sm">
@@ -287,15 +126,12 @@ export default function NewsEventsTable() {
             />
           </div>
 
-          {/* Add button – only for non-gallery or gallery uploader */}
-          {selectedCategory !== "Photo Gallery" ? (
-            <Button asChild>
-              <Link to="/newsnew">
-                <PlusIcon className="mr-2 h-4 w-4" />
-                Add News
-              </Link>
-            </Button>
-          ) : null}
+          <Button asChild>
+            <Link to="/newsnew">
+              <PlusIcon className="mr-2 h-4 w-4" />
+              Add News
+            </Link>
+          </Button>
         </div>
 
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -312,12 +148,7 @@ export default function NewsEventsTable() {
         </Select>
       </div>
 
-      {/* ---------- GALLERY UPLOADER (only when category=gallery) ---------- */}
-      {selectedCategory === "Photo Gallery" && (
-        <GalleryUploader onSuccess={() => setCurrentPage(1)} />
-      )}
-
-      {/* ---------- TABLE ---------- */}
+      {/* Table */}
       <Card>
         <div className="overflow-x-auto">
           <Table>
@@ -326,9 +157,7 @@ export default function NewsEventsTable() {
                 <TableHead className="w-[25%]">Title</TableHead>
                 <TableHead className="w-[15%]">Date</TableHead>
                 <TableHead className="w-[15%]">Category</TableHead>
-                <TableHead className="w-[25%]">
-                  {selectedCategory === "Photo Gallery" ? "Photos" : "Description"}
-                </TableHead>
+                <TableHead className="w-[25%]">Description</TableHead>
                 <TableHead className="w-[10%]">Preview</TableHead>
                 <TableHead className="w-[10%]">Actions</TableHead>
               </TableRow>
@@ -344,17 +173,14 @@ export default function NewsEventsTable() {
                     </TableCell>
                   </TableRow>
                 ))
-              ) : displayItems.length > 0 ? (
-                displayItems.map((item: any) => {
-                  const isGallery = selectedCategory === "Photo Gallery"
-                  const date = isGallery ? item.uploadedAt : item.publicationDate
+              ) : filteredNews.length > 0 ? (
+                filteredNews.map((item: any) => {
+                  const date = item.publicationDate
 
                   return (
                     <TableRow key={item._id}>
-                      {/* Title */}
                       <TableCell className="font-medium">{item.title}</TableCell>
 
-                      {/* Date */}
                       <TableCell>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <CalendarIcon className="h-3.5 w-3.5" />
@@ -362,41 +188,22 @@ export default function NewsEventsTable() {
                         </div>
                       </TableCell>
 
-                      {/* Category Badge */}
                       <TableCell>
                         <Badge
-                          variant={getCategoryVariant(isGallery ? "Photo Gallery" : item.category)}
+                          variant={getCategoryVariant(item.category)}
                           className="flex w-fit items-center gap-1"
                         >
-                          {getCategoryIcon(isGallery ? "Photo Gallery" : item.category)}
-                          <span>{isGallery ? "Photo Gallery" : item.category}</span>
+                          {getCategoryIcon(item.category)}
+                          <span>{item.category}</span>
                         </Badge>
                       </TableCell>
 
-                      {/* Description / Photo Count */}
                       <TableCell className="text-sm text-muted-foreground">
-                        {isGallery
-                          ? `${item.photos.length} photo${item.photos.length > 1 ? "s" : ""}`
-                          : item.description}
+                        {item.description}
                       </TableCell>
 
-                      {/* Cover / First Photo */}
                       <TableCell className="text-center">
-                        {isGallery ? (
-                          item.photos.length > 0 && (
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => setPreviewGallery(item)}
-                                >
-                                  <ImageIcon className="h-4 w-4 text-amber-600" />
-                                </Button>
-                              </DialogTrigger>
-                            </Dialog>
-                          )
-                        ) : item.photo ? (
+                        {item.photo ? (
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button variant="ghost" size="icon">
@@ -417,18 +224,13 @@ export default function NewsEventsTable() {
                         )}
                       </TableCell>
 
-                      {/* Actions */}
                       <TableCell className="flex gap-1 justify-center">
-                        {/* Edit – only for news (gallery edit not implemented) */}
-                        {!isGallery && (
-                          <Button variant="outline" size="icon">
-                            <Link to={`/news-and-events/${item._id}/edit`}>
-                              <EditIcon className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                        )}
+                        <Button variant="outline" size="icon">
+                          <Link to={`/news-and-events/${item._id}/edit`}>
+                            <EditIcon className="h-4 w-4" />
+                          </Link>
+                        </Button>
 
-                        {/* Delete */}
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
@@ -453,7 +255,7 @@ export default function NewsEventsTable() {
                                 </Button>
                                 <Button
                                   variant="destructive"
-                                  onClick={() => handleDelete(item._id, isGallery)}
+                                  onClick={() => handleDelete(item._id)}
                                   disabled={deleting}
                                 >
                                   {deleting ? "Deleting…" : "Delete"}
@@ -477,9 +279,9 @@ export default function NewsEventsTable() {
           </Table>
         </div>
 
-        {/* ---------- PAGINATION ---------- */}
+        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between pt-4">
+          <div className="flex items-center justify-between pt-4 px-4 pb-4">
             <Button
               variant="outline"
               size="sm"
@@ -502,31 +304,6 @@ export default function NewsEventsTable() {
           </div>
         )}
       </Card>
-
-      {/* ---------- FULL GALLERY PREVIEW DIALOG ---------- */}
-      {previewGallery && (
-        <Dialog open={!!previewGallery} onOpenChange={() => setPreviewGallery(null)}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
-            <DialogHeader>
-              <DialogTitle>{previewGallery.title}</DialogTitle>
-              {previewGallery.description && (
-                <p className="text-sm text-muted-foreground">{previewGallery.description}</p>
-              )}
-            </DialogHeader>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-              {previewGallery.photos.map((url: string, idx: number) => (
-                <img
-                  key={idx}
-                  src={url}
-                  alt={`Gallery ${idx + 1}`}
-                  className="w-full h-48 object-cover rounded-md cursor-pointer hover:opacity-80 transition"
-                  onClick={() => window.open(url, "_blank")}
-                />
-              ))}
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   )
 }
