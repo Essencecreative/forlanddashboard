@@ -37,6 +37,7 @@ import {
 const categoryOptions = [
   { value: "all", label: "All Categories" },
   { value: "pfp", label: "PFP Technical Reports" },
+  { value: "pfp-administrative-and-management", label: "PFP Administrative & Management Reports" },
   { value: "forvac", label: "FORVAC Technical Reports" },
   { value: "forland-admin", label: "FORLAND - Admin & Financial Reports" },
   { value: "forland-technical", label: "FORLAND - Project Technical Report" },

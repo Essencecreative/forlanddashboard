@@ -147,13 +147,39 @@ export default function DashboardSidebar() {
                 </SidebarMenuItem>
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <Link to="/publications?category=pfp">
-                        <SidebarMenuSubButton>
-                          PFP Technical Reports
-                        </SidebarMenuSubButton>
-                      </Link>
-                    </SidebarMenuSubItem>
+                    {/* PFP Reports Submenu */}
+                    <Collapsible
+                      className="w-full"
+                      open={isMenuOpen("pfp-reports")}
+                      onOpenChange={() => toggleMenu("pfp-reports")}
+                    >
+                      <SidebarMenuSubItem>
+                        <CollapsibleTrigger className="w-full" asChild>
+                          <SidebarMenuSubButton>
+                            PFP Reports
+                            <ChevronDown
+                              className={`ml-auto h-3 w-3 shrink-0 transition-transform duration-200 ${
+                                isMenuOpen("pfp-reports") ? "rotate-180" : ""
+                              }`}
+                            />
+                          </SidebarMenuSubButton>
+                        </CollapsibleTrigger>
+                      </SidebarMenuSubItem>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="border-l-0 pl-2">
+                          <SidebarMenuSubItem>
+                            <Link to="/publications?category=pfp">
+                              <TruncatedMenuItem text="PFP Technical Reports" />
+                            </Link>
+                          </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <Link to="/publications?category=pfp-administrative-and-management">
+                              <TruncatedMenuItem text="PFP Administrative & Management Reports" />
+                            </Link>
+                          </SidebarMenuSubItem>
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </Collapsible>
 
                     {/* FORVAC Reports Submenu */}
                     <Collapsible
