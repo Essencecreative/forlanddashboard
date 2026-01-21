@@ -62,6 +62,7 @@ export default function EditTeamMemberPage() {
     if (id) {
       fetchTeamMember()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, token])
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

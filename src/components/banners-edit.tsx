@@ -27,46 +27,44 @@ export default function BannersEditPage() {
   const [loading, setLoading] = useState(true)
   const [image, setImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>("")
-  const [currentImage, setCurrentImage] = useState<string>("")
   const [updating, setUpdating] = useState(false)
   const [isActive, setIsActive] = useState(true)
   const [title, setTitle] = useState("")
 
   useEffect(() => {
+    const fetchBanner = async (bannerId: string) => {
+      try {
+        setLoading(true)
+        const response = await fetch(`https://forlandservice.onrender.com/banners/${bannerId}`)
+
+        if (response.ok) {
+          const data: Banner = await response.json()
+          setTitle(data.title)
+          setImagePreview(data.image)
+          setIsActive(data.isActive)
+        } else {
+          toast({
+            title: "❌ Error",
+            description: "Failed to load banner",
+          })
+          navigate("/banners")
+        }
+      } catch (error) {
+        console.error("Error fetching banner:", error)
+        toast({
+          title: "❌ Error",
+          description: "An error occurred while loading the banner",
+        })
+        navigate("/banners")
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (id) {
       fetchBanner(id)
     }
-  }, [id])
-
-  const fetchBanner = async (bannerId: string) => {
-    try {
-      setLoading(true)
-      const response = await fetch(`https://forlandservice.onrender.com/banners/${bannerId}`)
-
-      if (response.ok) {
-        const data: Banner = await response.json()
-        setTitle(data.title)
-        setCurrentImage(data.image)
-        setImagePreview(data.image)
-        setIsActive(data.isActive)
-      } else {
-        toast({
-          title: "❌ Error",
-          description: "Failed to load banner",
-        })
-        navigate("/banners")
-      }
-    } catch (error) {
-      console.error("Error fetching banner:", error)
-      toast({
-        title: "❌ Error",
-        description: "An error occurred while loading the banner",
-      })
-      navigate("/banners")
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [id, navigate])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

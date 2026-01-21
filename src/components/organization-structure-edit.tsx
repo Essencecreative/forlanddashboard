@@ -40,7 +40,6 @@ export default function OrganizationStructureEditPage() {
   const [loading, setLoading] = useState(true)
   const [banner, setBanner] = useState<File | null>(null)
   const [bannerPreview, setBannerPreview] = useState<string>("")
-  const [currentBanner, setCurrentBanner] = useState<string>("")
   const [updating, setUpdating] = useState(false)
 
   const form = useForm<FormValues>({
@@ -53,39 +52,38 @@ export default function OrganizationStructureEditPage() {
   })
 
   useEffect(() => {
+    const fetchStructure = async (structureId: string) => {
+      try {
+        setLoading(true)
+        const response = await fetch(`https://forlandservice.onrender.com/organization-structure/${structureId}`)
+
+        if (response.ok) {
+          const data: OrganizationStructure = await response.json()
+          form.reset({
+            title: data.title,
+            description: data.description || "",
+            isActive: data.isActive,
+          })
+          if (data.banner) {
+            setBannerPreview(data.banner)
+          }
+        } else {
+          alert("Failed to load organization structure")
+          navigate("/organization-structure")
+        }
+      } catch (error) {
+        console.error("Error fetching organization structure:", error)
+        alert("An error occurred while loading the organization structure")
+        navigate("/organization-structure")
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (id) {
       fetchStructure(id)
     }
-  }, [id])
-
-  const fetchStructure = async (structureId: string) => {
-    try {
-      setLoading(true)
-      const response = await fetch(`https://forlandservice.onrender.com/organization-structure/${structureId}`)
-
-      if (response.ok) {
-        const data: OrganizationStructure = await response.json()
-        form.reset({
-          title: data.title,
-          description: data.description || "",
-          isActive: data.isActive,
-        })
-        if (data.banner) {
-          setCurrentBanner(data.banner)
-          setBannerPreview(data.banner)
-        }
-      } else {
-        alert("Failed to load organization structure")
-        navigate("/organization-structure")
-      }
-    } catch (error) {
-      console.error("Error fetching organization structure:", error)
-      alert("An error occurred while loading the organization structure")
-      navigate("/organization-structure")
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [id, navigate, form])
 
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

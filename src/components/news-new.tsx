@@ -8,20 +8,17 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { MarkdownEditor } from "./ui/markdown-editor"
-import { CalendarIcon, ImageIcon, MapPinIcon, SaveIcon } from "lucide-react"
+import { CalendarIcon, ImageIcon, SaveIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
 import { format } from "date-fns"
 import { cn } from "../lib/utils"
 import { toast } from "sonner"
-import { Checkbox } from "./ui/checkbox"
 import { useAuth } from "../auth-context"
 
 export default function NewNewsEventPage() {
   const navigate = useNavigate()
   const [date, setDate] = useState<Date>()
-  const [eventStartDate, setEventStartDate] = useState<Date>()
-  const [eventEndDate, setEventEndDate] = useState<Date>()
   const [description, setDescription] = useState("")
   const [content, setContent] = useState("")
   const [category, setCategory] = useState("")
@@ -69,8 +66,6 @@ export default function NewNewsEventPage() {
     }
   }
 
-  const isEvent = category === "Events and Trainings"
-  const isRadio = category === "Radio Programmes"
   const isGallery = category === "Photo Gallery"
 
   return (

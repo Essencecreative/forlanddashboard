@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "./ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
@@ -34,32 +34,32 @@ export default function OrganizationStructurePage() {
   const { token } = useAuth()
 
   useEffect(() => {
-    fetchStructures(currentPage)
-  }, [currentPage])
+    const fetchStructures = async (page: number) => {
+      try {
+        setLoading(true)
+        const response = await fetch(`https://forlandservice.onrender.com/organization-structure?page=${page}&limit=10`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
 
-  const fetchStructures = async (page: number) => {
-    try {
-      setLoading(true)
-      const response = await fetch(`https://forlandservice.onrender.com/organization-structure?page=${page}&limit=10`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setStructures(Array.isArray(data) ? data : data.structures || data.data || [])
-        setTotalPages(data.totalPages || 1)
-      } else {
-        console.error("Failed to fetch organization structures")
+        if (response.ok) {
+          const data = await response.json()
+          setStructures(Array.isArray(data) ? data : data.structures || data.data || [])
+          setTotalPages(data.totalPages || 1)
+        } else {
+          console.error("Failed to fetch organization structures")
+        }
+      } catch (error) {
+        console.error("Error fetching organization structures:", error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error("Error fetching organization structures:", error)
-    } finally {
-      setLoading(false)
     }
-  }
+
+    fetchStructures(currentPage)
+  }, [currentPage, token])
 
   const handleDelete = async () => {
     if (!selectedId) return

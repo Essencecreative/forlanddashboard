@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "./ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
@@ -33,32 +33,32 @@ export default function BannersPage() {
   const { token } = useAuth()
 
   useEffect(() => {
-    fetchBanners(currentPage)
-  }, [currentPage])
+    const fetchBanners = async (page: number) => {
+      try {
+        setLoading(true)
+        const response = await fetch(`https://forlandservice.onrender.com/banners?page=${page}&limit=10`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
 
-  const fetchBanners = async (page: number) => {
-    try {
-      setLoading(true)
-      const response = await fetch(`https://forlandservice.onrender.com/banners?page=${page}&limit=10`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setBanners(Array.isArray(data) ? data : data.banners || data.data || [])
-        setTotalPages(data.totalPages || 1)
-      } else {
-        console.error("Failed to fetch banners")
+        if (response.ok) {
+          const data = await response.json()
+          setBanners(Array.isArray(data) ? data : data.banners || data.data || [])
+          setTotalPages(data.totalPages || 1)
+        } else {
+          console.error("Failed to fetch banners")
+        }
+      } catch (error) {
+        console.error("Error fetching banners:", error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error("Error fetching banners:", error)
-    } finally {
-      setLoading(false)
     }
-  }
+
+    fetchBanners(currentPage)
+  }, [currentPage, token])
 
   const handleDelete = async () => {
     if (!selectedId) return

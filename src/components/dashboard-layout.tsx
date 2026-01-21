@@ -10,7 +10,7 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [pageTitle, setPageTitle] = useState("Dashboard")
+  const [pageTitle] = useState("Dashboard")
 
   return (
     <SidebarProvider>

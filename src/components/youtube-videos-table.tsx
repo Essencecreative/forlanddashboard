@@ -24,8 +24,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogFooter,
-  DialogTitle,
-  DialogDescription,
 } from "./ui/dialog"
 
 export default function YouTubeVideosTable() {

@@ -36,7 +36,6 @@ export default function HomeSliderTable() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [sortField, setSortField] = useState<"title">("title")
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
   const itemsPerPage = 5
   const { token } = useAuth()

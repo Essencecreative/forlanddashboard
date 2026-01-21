@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "./ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { useAuth } from "../auth-context"
-import { PlusIcon, EditIcon, Trash2Icon, XIcon, CheckIcon } from "lucide-react"
+import { PlusIcon, EditIcon, Trash2Icon } from "lucide-react"
 import { Skeleton } from "./ui/skeleton"
 
 interface Category {
