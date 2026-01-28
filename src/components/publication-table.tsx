@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Link, useNavigate } from "react-router"
+import { Link, useNavigate, useSearchParams } from "react-router"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -38,7 +38,8 @@ const categoryOptions = [
   { value: "all", label: "All Categories" },
   { value: "pfp", label: "PFP Technical Reports" },
   { value: "pfp-administrative-and-management", label: "PFP Administrative & Management Reports" },
-  { value: "forvac", label: "FORVAC Technical Reports" },
+  { value: "forvac-technical", label: "FORVAC Technical Reports" },
+  { value: "forvac-administrative-and-management", label: "FORVAC Administrative & Management Reports" },
   { value: "forland-admin", label: "FORLAND - Admin & Financial Reports" },
   { value: "forland-technical", label: "FORLAND - Project Technical Report" },
   { value: "forland-forms", label: "FORLAND - Forms and Guidelines" },
@@ -52,7 +53,25 @@ export default function PublicationsTable() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const urlCategory = searchParams.get("category")
+  const urlSubcategory = searchParams.get("subcategory")
+  
+  // Determine initial category from URL params or default to "all"
+  const getInitialCategory = () => {
+    if (urlCategory === "forvac" && urlSubcategory === "technical") {
+      return "forvac-technical"
+    }
+    if (urlCategory === "forvac" && urlSubcategory === "admin") {
+      return "forvac-administrative-and-management"
+    }
+    if (urlCategory && urlCategory !== "all") {
+      return urlCategory
+    }
+    return "all"
+  }
+  
+  const [selectedCategory, setSelectedCategory] = useState(getInitialCategory())
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [sortField, setSortField] = useState<"title" | "date">("date")
@@ -69,7 +88,13 @@ export default function PublicationsTable() {
     const fetchPublications = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/publications?page=${currentPage}&limit=${itemsPerPage}`, {
+        // Build API URL with category filter if not "all"
+        let apiUrl = `https://forlandservice.onrender.com/publications?page=${currentPage}&limit=${itemsPerPage}`
+        if (selectedCategory !== "all") {
+          apiUrl += `&category=${selectedCategory}`
+        }
+        
+        const res = await fetch(apiUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -88,14 +113,14 @@ export default function PublicationsTable() {
     }
 
     fetchPublications()
-  }, [currentPage, token])
+  }, [currentPage, selectedCategory, token])
 
+  // Filter by search query (category filtering is done on backend)
   const filteredPublications = publications.filter((pub) => {
     const matchesSearch =
       pub.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pub.description.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || pub.category === selectedCategory
-    return matchesSearch && matchesCategory
+    return matchesSearch
   })
 
   const sortedPublications = [...filteredPublications].sort((a, b) => {
@@ -108,7 +133,8 @@ export default function PublicationsTable() {
     }
   })
 
-  const paginatedPublications = sortedPublications.slice(0, itemsPerPage)
+  // Pagination is handled by backend, but we still need to slice for search results
+  const paginatedPublications = sortedPublications
 
   const toggleSort = (field: "title" | "date") => {
     if (sortField === field) {
@@ -149,6 +175,12 @@ export default function PublicationsTable() {
           onValueChange={(value) => {
             setSelectedCategory(value)
             setCurrentPage(1)
+            // Update URL params when category changes
+            if (value === "all") {
+              setSearchParams({})
+            } else {
+              setSearchParams({ category: value })
+            }
           }}
         >
           <SelectTrigger className="w-[180px]">
@@ -292,7 +324,22 @@ export default function PublicationsTable() {
                                         })
                                         if (!res.ok) throw new Error("Failed to delete publication")
                                         toast({ title: "Deleted successfully", variant: "default" })
-                                        setPublications((prev) => prev.filter((p) => p._id !== publication._id))
+                                        
+                                        // Refetch publications to update pagination
+                                        const refetchRes = await fetch(`https://forlandservice.onrender.com/publications?page=${currentPage}&limit=${itemsPerPage}${selectedCategory !== "all" ? `&category=${selectedCategory}` : ""}`, {
+                                          headers: {
+                                            Authorization: `Bearer ${token}`,
+                                          },
+                                        })
+                                        if (refetchRes.ok) {
+                                          const refetchData = await refetchRes.json()
+                                          setPublications(refetchData.publications)
+                                          setTotalPages(refetchData.totalPages)
+                                          // If current page is empty after deletion, go to previous page
+                                          if (refetchData.publications.length === 0 && currentPage > 1) {
+                                            setCurrentPage(currentPage - 1)
+                                          }
+                                        }
                                       } catch (error) {
                                         toast({ title: "Error deleting publication", variant: "destructive" })
                                       } finally {
