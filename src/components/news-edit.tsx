@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "./ui/select"
 import { MarkdownEditor } from "./ui/markdown-editor"
-import { CalendarIcon, SaveIcon } from "lucide-react"
+import { CalendarIcon, SaveIcon, FileIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
 import { format } from "date-fns"
@@ -36,6 +36,8 @@ export default function EditNewsEventPage() {
   const [content, setContent] = useState("")
   const [photo, setPhoto] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [documentFile, setDocumentFile] = useState<File | null>(null)
+  const [documentPreview, setDocumentPreview] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const isEvent = category === "Events and Trainings"
@@ -61,6 +63,7 @@ export default function EditNewsEventPage() {
         setDescription(data.description || "")
         setContent(data.contentDescription || "")
         setPhotoPreview(data.photo || null)
+        setDocumentPreview(data.documentUrl || null)
       } catch (err) {
         console.error("Fetch error:", err)
         toast({
@@ -78,6 +81,14 @@ export default function EditNewsEventPage() {
     if (file) {
       setPhoto(file)
       setPhotoPreview(URL.createObjectURL(file))
+    }
+  }
+
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setDocumentFile(file)
+      setDocumentPreview(file.name)
     }
   }
 
@@ -102,6 +113,7 @@ export default function EditNewsEventPage() {
     if (eventStartDate) formData.append("eventStartDate", eventStartDate.toISOString())
     if (eventEndDate) formData.append("eventEndDate", eventEndDate.toISOString())
     if (photo) formData.append("photo", photo)
+    if (documentFile) formData.append("document", documentFile)
 
     try {
       const response = await fetch(`https://forlandservice.onrender.com/news/${id}`, {
@@ -254,6 +266,30 @@ export default function EditNewsEventPage() {
                   />
                 )}
                 <Input id="photo" type="file" accept="image/*" onChange={handlePhotoChange} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="document">Upload Document</Label>
+                {documentPreview && !documentFile && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <FileIcon className="w-4 h-4" />
+                    <a href={documentPreview} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      Current Document
+                    </a>
+                  </div>
+                )}
+                {documentFile && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <FileIcon className="w-4 h-4" />
+                    <span>{documentPreview}</span>
+                  </div>
+                )}
+                <Input
+                  id="document"
+                  type="file"
+                  accept=".pdf,.doc,.docx,.ppt,.pptx"
+                  onChange={handleDocumentChange}
+                />
               </div>
             </CardContent>
 

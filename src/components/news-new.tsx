@@ -8,7 +8,7 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { MarkdownEditor } from "./ui/markdown-editor"
-import { CalendarIcon, ImageIcon, SaveIcon } from "lucide-react"
+import { CalendarIcon, ImageIcon, SaveIcon, FileIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
 import { format } from "date-fns"
@@ -23,6 +23,7 @@ export default function NewNewsEventPage() {
   const [content, setContent] = useState("")
   const [category, setCategory] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [documentFile, setDocumentFile] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { token } = useAuth()
 
@@ -43,6 +44,10 @@ export default function NewNewsEventPage() {
 
     if (imageFile) {
       formData.append("photo", imageFile)
+    }
+    
+    if (documentFile) {
+      formData.append("document", documentFile)
     }
 
     try {
@@ -140,6 +145,22 @@ export default function NewNewsEventPage() {
                     <ImageIcon className="h-4 w-4" />
                   </Button>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="document">Upload Document</Label>
+                <Input
+                  id="document"
+                  type="file"
+                  accept=".pdf,.doc,.docx,.ppt,.pptx"
+                  onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                />
+                {documentFile && (
+                  <p className="text-sm text-muted-foreground">
+                    <FileIcon className="inline-block mr-1" />
+                    {documentFile.name}
+                  </p>
+                )}
               </div>
 
               {!isGallery && (
