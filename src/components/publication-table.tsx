@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router"
 import {
   ArrowDownIcon,
@@ -58,7 +58,7 @@ export default function PublicationsTable() {
   const urlSubcategory = searchParams.get("subcategory")
   
   // Determine category from URL params or default to "all"
-  const getCategoryFromUrl = () => {
+  const getCategoryFromUrl = useCallback(() => {
     if (urlCategory === "forvac" && urlSubcategory === "technical") {
       return "forvac-technical"
     }
@@ -69,9 +69,9 @@ export default function PublicationsTable() {
       return urlCategory
     }
     return "all"
-  }
+  }, [urlCategory, urlSubcategory])
   
-  const [selectedCategory, setSelectedCategory] = useState(getCategoryFromUrl())
+  const [selectedCategory, setSelectedCategory] = useState(() => getCategoryFromUrl())
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [sortField, setSortField] = useState<"title" | "date">("date")
@@ -91,7 +91,7 @@ export default function PublicationsTable() {
       setSelectedCategory(newCategory)
       setCurrentPage(1) // Reset to page 1 when category changes
     }
-  }, [urlCategory, urlSubcategory, selectedCategory])
+  }, [getCategoryFromUrl, selectedCategory])
 
   useEffect(() => {
     const fetchPublications = async () => {
