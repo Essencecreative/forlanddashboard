@@ -57,8 +57,8 @@ export default function PublicationsTable() {
   const urlCategory = searchParams.get("category")
   const urlSubcategory = searchParams.get("subcategory")
   
-  // Determine initial category from URL params or default to "all"
-  const getInitialCategory = () => {
+  // Determine category from URL params or default to "all"
+  const getCategoryFromUrl = () => {
     if (urlCategory === "forvac" && urlSubcategory === "technical") {
       return "forvac-technical"
     }
@@ -71,7 +71,7 @@ export default function PublicationsTable() {
     return "all"
   }
   
-  const [selectedCategory, setSelectedCategory] = useState(getInitialCategory())
+  const [selectedCategory, setSelectedCategory] = useState(getCategoryFromUrl())
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [sortField, setSortField] = useState<"title" | "date">("date")
@@ -83,6 +83,15 @@ export default function PublicationsTable() {
 
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+
+  // Update selectedCategory when URL params change
+  useEffect(() => {
+    const newCategory = getCategoryFromUrl()
+    if (newCategory !== selectedCategory) {
+      setSelectedCategory(newCategory)
+      setCurrentPage(1) // Reset to page 1 when category changes
+    }
+  }, [urlCategory, urlSubcategory, selectedCategory])
 
   useEffect(() => {
     const fetchPublications = async () => {
