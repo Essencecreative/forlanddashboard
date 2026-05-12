@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "./ui/badge"
 import { Skeleton } from "./ui/skeleton"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle,
   DialogDescription
@@ -69,7 +70,7 @@ export default function NewsEventsTable() {
       setLoading(true)
       try {
         const res = await fetch(
-          `https://forlandservice.onrender.com/news?page=${currentPage}&limit=${itemsPerPage}`,
+          `${API_BASE_URL}/news?page=${currentPage}&limit=${itemsPerPage}`,
           { headers: { Authorization: `Bearer ${token}` } }
         )
         const data = await res.json()
@@ -96,7 +97,7 @@ export default function NewsEventsTable() {
   const handleDelete = async (id: string) => {
     setDeleting(true)
     try {
-      const res = await fetch(`https://forlandservice.onrender.com/news/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/news/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
-import { MarkdownEditor } from "./ui/markdown-editor"
+import { TiptapEditor } from "./ui/tiptap-editor"
 import { CalendarIcon, SaveIcon, FileIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
@@ -21,6 +21,7 @@ import { format } from "date-fns"
 import { cn } from "../lib/utils"
 import { toast } from "../hooks/use-toast"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 
 export default function EditNewsEventPage() {
   const navigate = useNavigate()
@@ -48,7 +49,7 @@ export default function EditNewsEventPage() {
 
     const fetchNewsEvent = async () => {
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/news/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/news/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
@@ -92,6 +93,24 @@ export default function EditNewsEventPage() {
     }
   }
 
+  const onImageUpload = async (file: File) => {
+    if (!token) throw new Error("Not authenticated")
+    const formData = new FormData()
+    formData.append("file", file)
+
+    const response = await fetch(`${API_BASE_URL}/news/upload-image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    if (!response.ok) throw new Error("Failed to upload image")
+    const data = await response.json()
+    return data.url
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === "Enter" && e.target instanceof HTMLInputElement && e.target.type !== "textarea") {
       e.preventDefault()
@@ -116,7 +135,7 @@ export default function EditNewsEventPage() {
     if (documentFile) formData.append("document", documentFile)
 
     try {
-      const response = await fetch(`https://forlandservice.onrender.com/news/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/news/${id}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -251,7 +270,15 @@ export default function EditNewsEventPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="content">Content</Label>
-                    <MarkdownEditor value={content} onChange={setContent} placeholder="Write your content here..." />
+                    <div className="min-h-[400px] relative">
+                       <TiptapEditor 
+                        value={content} 
+                        onChange={setContent} 
+                        onImageUpload={onImageUpload}
+                        placeholder="Write your content here..." 
+                        fullScreen={false}
+                      />
+                    </div>
                   </div>
                 </>
               )}

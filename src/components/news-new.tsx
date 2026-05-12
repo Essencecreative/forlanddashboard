@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
-import { MarkdownEditor } from "./ui/markdown-editor"
+import { TiptapEditor } from "./ui/tiptap-editor"
 import { CalendarIcon, ImageIcon, SaveIcon, FileIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
@@ -15,6 +15,7 @@ import { format } from "date-fns"
 import { cn } from "../lib/utils"
 import { toast } from "sonner"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 
 export default function NewNewsEventPage() {
   const navigate = useNavigate()
@@ -26,6 +27,24 @@ export default function NewNewsEventPage() {
   const [documentFile, setDocumentFile] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { token } = useAuth()
+
+  const onImageUpload = async (file: File) => {
+    if (!token) throw new Error("Not authenticated")
+    const formData = new FormData()
+    formData.append("file", file)
+
+    const response = await fetch(`${API_BASE_URL}/news/upload-image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    if (!response.ok) throw new Error("Failed to upload image")
+    const data = await response.json()
+    return data.url
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -51,7 +70,7 @@ export default function NewNewsEventPage() {
     }
 
     try {
-      const response = await fetch("https://forlandservice.onrender.com/news", {
+      const response = await fetch(`${API_BASE_URL}/news`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -180,7 +199,15 @@ export default function NewNewsEventPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="content">Content</Label>
-                    <MarkdownEditor value={content} onChange={setContent} placeholder="Write your content here..." />
+                    <div className="min-h-[400px] relative">
+                       <TiptapEditor 
+                        value={content} 
+                        onChange={setContent} 
+                        onImageUpload={onImageUpload}
+                        placeholder="Write your content here..." 
+                        fullScreen={false}
+                      />
+                    </div>
                   </div>
                 </>
               )}

@@ -15,6 +15,7 @@ import { Switch } from "./ui/switch"
 import { Upload } from "lucide-react"
 import DashboardLayout from "./dashboard-layout"
 import { toast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -64,7 +65,7 @@ export default function OrganizationStructureNewPage() {
         formData.append("banner", banner)
       }
 
-      const response = await fetch("https://forlandservice.onrender.com/organization-structure", {
+      const response = await fetch(`${API_BASE_URL}/organization-structure`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

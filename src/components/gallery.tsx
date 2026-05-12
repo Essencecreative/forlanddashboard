@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useAuth } from "../auth-context"
 import { PlusIcon, EditIcon, Trash2Icon, ImageIcon } from "lucide-react"
 import { Skeleton } from "./ui/skeleton"
+import { API_BASE_URL } from "../lib/api";
 
 interface GalleryItem {
   _id: string
@@ -50,7 +51,7 @@ export default function GalleryPage() {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const res = await fetch("https://forlandservice.onrender.com/gallery-categories/?isActive=true")
+      const res = await fetch(`${API_BASE_URL}/gallery-categories/?isActive=true`)
       if (!res.ok) throw new Error("Failed to fetch categories")
       const data = await res.json()
       const categoryList = Array.isArray(data) ? data : (data.categories || data.data || [])
@@ -65,7 +66,7 @@ export default function GalleryPage() {
   const fetchGalleries = async () => {
     try {
       setLoading(true)
-      const res = await fetch("https://forlandservice.onrender.com/gallery/")
+      const res = await fetch(`${API_BASE_URL}/gallery/`)
       if (!res.ok) throw new Error("Failed to fetch galleries")
       const data = await res.json()
       const galleryList = Array.isArray(data) ? data : (data.galleries || data.data || [])
@@ -111,8 +112,8 @@ export default function GalleryPage() {
       }
 
       const url = editingId
-        ? `https://forlandservice.onrender.com/gallery/${editingId}`
-        : "https://forlandservice.onrender.com/gallery/"
+        ? `${API_BASE_URL}/gallery/${editingId}`
+        : `${API_BASE_URL}/gallery/`
 
       const method = editingId ? "PUT" : "POST"
 
@@ -147,7 +148,7 @@ export default function GalleryPage() {
     }
 
     try {
-      const res = await fetch(`https://forlandservice.onrender.com/gallery/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/gallery/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

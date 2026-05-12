@@ -14,6 +14,7 @@ import {
   TabsTrigger,
 } from "./ui/tabs"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts"
@@ -28,7 +29,7 @@ export default function DashboardContent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("https://forlandservice.onrender.com/stats/summary", {
+        const res = await fetch(`${API_BASE_URL}/stats/summary`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

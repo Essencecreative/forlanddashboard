@@ -11,6 +11,7 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Loader2, SaveIcon } from "lucide-react"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 
 const YouTubeVideoSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -46,7 +47,7 @@ export default function NewYouTubeVideoPage() {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch("https://forlandservice.onrender.com/youtube/", {
+      const response = await fetch(`${API_BASE_URL}/youtube/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

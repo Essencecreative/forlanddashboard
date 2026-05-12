@@ -12,6 +12,7 @@ import { Skeleton } from "./ui/skeleton"
 import { useAuth } from "../auth-context"
 import DashboardLayout from "./dashboard-layout"
 import { toast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 
 interface Banner {
   _id: string
@@ -35,7 +36,7 @@ export default function BannersEditPage() {
     const fetchBanner = async (bannerId: string) => {
       try {
         setLoading(true)
-        const response = await fetch(`https://forlandservice.onrender.com/banners/${bannerId}`)
+        const response = await fetch(`${API_BASE_URL}/banners/${bannerId}`)
 
         if (response.ok) {
           const data: Banner = await response.json()
@@ -93,7 +94,7 @@ export default function BannersEditPage() {
         formData.append("image", image)
       }
 
-      const response = await fetch(`https://forlandservice.onrender.com/banners/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/banners/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

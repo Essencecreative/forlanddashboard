@@ -11,6 +11,7 @@ import { toast } from "../hooks/use-toast"
 import { Checkbox } from "./ui/checkbox"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
+import { API_BASE_URL } from "../lib/api";
 
 export default function BannersNewPage() {
   const navigate = useNavigate()
@@ -59,7 +60,7 @@ export default function BannersNewPage() {
       formData.append("isActive", String(isActive))
       formData.append("title", title)
 
-      const response = await fetch("https://forlandservice.onrender.com/banners", {
+      const response = await fetch(`${API_BASE_URL}/banners`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

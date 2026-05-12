@@ -25,6 +25,7 @@ import { useAuth } from "../auth-context"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter } from "./ui/dialog"
 import { useToast } from "../hooks/use-toast" // Importing useToast
 import DashboardLayout from "./dashboard-layout"
+import { API_BASE_URL } from "../lib/api";
 
 type Opportunity = {
   _id: string
@@ -64,7 +65,7 @@ export default function OpportunitiesTable() {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const res = await fetch("https://forlandservice.onrender.com/opportunities", {
+        const res = await fetch(`${API_BASE_URL}/opportunities`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -122,7 +123,7 @@ export default function OpportunitiesTable() {
     if (deleteId) {
       setDeleting(true)
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/opportunities/${deleteId}`, {
+        const res = await fetch(`${API_BASE_URL}/opportunities/${deleteId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,

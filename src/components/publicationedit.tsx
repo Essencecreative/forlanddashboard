@@ -29,6 +29,7 @@ import { Calendar } from "./ui/calendar"
 import { format } from "date-fns"
 import { cn } from "../lib/utils"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 
 const PublicationSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -68,7 +69,7 @@ export default function EditPublicationPage() {
   useEffect(() => {
     const fetchPublication = async () => {
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/publications/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/publications/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -136,7 +137,7 @@ export default function EditPublicationPage() {
     }
 
     try {
-      const response = await fetch(`https://forlandservice.onrender.com/publications/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/publications/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

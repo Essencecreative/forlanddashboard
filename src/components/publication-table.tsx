@@ -23,6 +23,7 @@ import { Badge } from "./ui/badge"
 import { Skeleton } from "./ui/skeleton"
 import { useAuth } from "../auth-context"
 import { useToast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 import {
   Dialog,
   DialogTrigger,
@@ -98,7 +99,7 @@ export default function PublicationsTable() {
       setLoading(true)
       try {
         // Build API URL with category filter if not "all"
-        let apiUrl = `https://forlandservice.onrender.com/publications?page=${currentPage}&limit=${itemsPerPage}`
+        let apiUrl = `${API_BASE_URL}/publications?page=${currentPage}&limit=${itemsPerPage}`
         if (selectedCategory !== "all") {
           apiUrl += `&category=${selectedCategory}`
         }
@@ -325,7 +326,7 @@ export default function PublicationsTable() {
                                     onClick={async () => {
                                       setDeleting(true)
                                       try {
-                                        const res = await fetch(`https://forlandservice.onrender.com/publications/${publication._id}`, {
+                                        const res = await fetch(`${API_BASE_URL}/publications/${publication._id}`, {
                                           method: "DELETE",
                                           headers: {
                                             Authorization: `Bearer ${token}`,
@@ -335,7 +336,7 @@ export default function PublicationsTable() {
                                         toast({ title: "Deleted successfully", variant: "default" })
                                         
                                         // Refetch publications to update pagination
-                                        const refetchRes = await fetch(`https://forlandservice.onrender.com/publications?page=${currentPage}&limit=${itemsPerPage}${selectedCategory !== "all" ? `&category=${selectedCategory}` : ""}`, {
+                                        const refetchRes = await fetch(`${API_BASE_URL}/publications?page=${currentPage}&limit=${itemsPerPage}${selectedCategory !== "all" ? `&category=${selectedCategory}` : ""}`, {
                                           headers: {
                                             Authorization: `Bearer ${token}`,
                                           },

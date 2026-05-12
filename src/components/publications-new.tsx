@@ -17,6 +17,7 @@ import { Calendar } from "./ui/calendar"
 import { format } from "date-fns"
 import { cn } from "../lib/utils"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 
 const PublicationSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -67,7 +68,7 @@ export default function NewPublicationPage() {
     }
 
     try {
-      const response = await fetch("https://forlandservice.onrender.com/publications", {
+      const response = await fetch(`${API_BASE_URL}/publications`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Badge } from "./ui/badge"
 import DashboardLayout from "./dashboard-layout"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 import {
   Dialog,
   DialogTrigger,
@@ -50,7 +51,7 @@ export default function UsersTable() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("https://forlandservice.onrender.com/users", {
+        const res = await fetch(`${API_BASE_URL}/users`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,7 +85,7 @@ export default function UsersTable() {
   const handleDelete = async () => {
     if (!selectedUser) return
     try {
-      const res = await fetch(`https://forlandservice.onrender.com/users/delete-team-member/${selectedUser._id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/delete-team-member/${selectedUser._id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useAuth } from "../auth-context"
 import { PlusIcon, EditIcon, Trash2Icon } from "lucide-react"
 import { Skeleton } from "./ui/skeleton"
+import { API_BASE_URL } from "../lib/api";
 
 interface Category {
   _id: string
@@ -41,7 +42,7 @@ export default function GalleryCategoriesPage() {
   const fetchCategories = async () => {
     try {
       setLoading(true)
-      const res = await fetch("https://forlandservice.onrender.com/gallery-categories/")
+      const res = await fetch(`${API_BASE_URL}/gallery-categories/`)
       if (!res.ok) throw new Error("Failed to fetch categories")
       const data = await res.json()
       const categoryList = Array.isArray(data) ? data : (data.categories || data.data || [])
@@ -69,8 +70,8 @@ export default function GalleryCategoriesPage() {
 
     try {
       const url = editingId
-        ? `https://forlandservice.onrender.com/gallery-categories/${editingId}`
-        : "https://forlandservice.onrender.com/gallery-categories/"
+        ? `${API_BASE_URL}/gallery-categories/${editingId}`
+        : `${API_BASE_URL}/gallery-categories/`
 
       const method = editingId ? "PUT" : "POST"
 
@@ -104,7 +105,7 @@ export default function GalleryCategoriesPage() {
     }
 
     try {
-      const res = await fetch(`https://forlandservice.onrender.com/gallery-categories/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/gallery-categories/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

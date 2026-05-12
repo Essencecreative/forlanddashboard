@@ -11,6 +11,7 @@ import { useAuth } from "../auth-context"
 import { Skeleton } from "./ui/skeleton"
 import { Trash2, Edit } from "lucide-react"
 import DashboardLayout from "./dashboard-layout"
+import { API_BASE_URL } from "../lib/api";
 
 interface OrganizationStructure {
   _id: string
@@ -37,7 +38,7 @@ export default function OrganizationStructurePage() {
     const fetchStructures = async (page: number) => {
       try {
         setLoading(true)
-        const response = await fetch(`https://forlandservice.onrender.com/organization-structure?page=${page}&limit=10`, {
+        const response = await fetch(`${API_BASE_URL}/organization-structure?page=${page}&limit=10`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -66,7 +67,7 @@ export default function OrganizationStructurePage() {
 
     try {
       setDeleting(true)
-      const response = await fetch(`https://forlandservice.onrender.com/organization-structure/${selectedId}`, {
+      const response = await fetch(`${API_BASE_URL}/organization-structure/${selectedId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

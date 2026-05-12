@@ -16,6 +16,7 @@ import { Skeleton } from "./ui/skeleton"
 import { Upload } from "lucide-react"
 import DashboardLayout from "./dashboard-layout"
 import { toast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -55,7 +56,7 @@ export default function OrganizationStructureEditPage() {
     const fetchStructure = async (structureId: string) => {
       try {
         setLoading(true)
-        const response = await fetch(`https://forlandservice.onrender.com/organization-structure/${structureId}`)
+        const response = await fetch(`${API_BASE_URL}/organization-structure/${structureId}`)
 
         if (response.ok) {
           const data: OrganizationStructure = await response.json()
@@ -111,7 +112,7 @@ export default function OrganizationStructureEditPage() {
         formData.append("banner", banner)
       }
 
-      const response = await fetch(`https://forlandservice.onrender.com/organization-structure/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/organization-structure/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -25,6 +25,7 @@ import { Skeleton } from "./ui/skeleton"
 import { useAuth } from "../auth-context"
 import { useToast } from "../hooks/use-toast"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter } from "./ui/dialog"
+import { API_BASE_URL } from "../lib/api";
 
 interface TeamMember {
   _id: string
@@ -59,7 +60,7 @@ export default function TeamMembersTable() {
     const fetchTeam = async () => {
       setLoading(true)
       try {
-        const response = await fetch("https://forlandservice.onrender.com/team", {
+        const response = await fetch(`${API_BASE_URL}/team`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -87,7 +88,7 @@ export default function TeamMembersTable() {
     if (!memberToDelete) return
 
     try {
-      const response = await fetch(`https://forlandservice.onrender.com/team/${memberToDelete}`, {
+      const response = await fetch(`${API_BASE_URL}/team/${memberToDelete}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

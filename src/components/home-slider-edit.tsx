@@ -11,6 +11,7 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Loader2, SaveIcon, FileIcon } from "lucide-react"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 
 const HomeSliderSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -53,7 +54,7 @@ export default function EditHomeSliderPage() {
   useEffect(() => {
     const fetchSlider = async () => {
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/slider/${id}`)
+        const res = await fetch(`${API_BASE_URL}/slider/${id}`)
         const data = await res.json()
 
         if (!res.ok) throw new Error(data.message || "Failed to fetch home slider.")
@@ -109,7 +110,7 @@ export default function EditHomeSliderPage() {
     }
 
     try {
-      const response = await fetch(`https://forlandservice.onrender.com/slider/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/slider/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { SaveIcon, UploadIcon } from "lucide-react"
 import { useToast } from "../hooks/use-toast"
 import { useAuth } from "../auth-context"
+import { API_BASE_URL } from "../lib/api";
 
 export default function NewTeamMemberPage() {
   const { token } = useAuth()
@@ -61,7 +62,7 @@ export default function NewTeamMemberPage() {
       Object.entries(formData).forEach(([key, value]) => payload.append(key, value))
       if (photoFile) payload.append("photo", photoFile)
 
-      const res = await fetch("https://forlandservice.onrender.com/team/create-team-member", {
+      const res = await fetch(`${API_BASE_URL}/team/create-team-member`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

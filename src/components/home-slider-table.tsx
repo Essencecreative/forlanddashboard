@@ -19,6 +19,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/t
 import { Skeleton } from "./ui/skeleton"
 import { useAuth } from "../auth-context"
 import { useToast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 import {
   Dialog,
   DialogTrigger,
@@ -49,7 +50,7 @@ export default function HomeSliderTable() {
     const fetchSliders = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/slider/?page=${currentPage}&limit=${itemsPerPage}`)
+        const res = await fetch(`${API_BASE_URL}/slider/?page=${currentPage}&limit=${itemsPerPage}`)
 
         if (!res.ok) throw new Error("Failed to fetch home sliders")
 
@@ -227,7 +228,7 @@ export default function HomeSliderTable() {
                                     onClick={async () => {
                                       setDeleting(true)
                                       try {
-                                        const res = await fetch(`https://forlandservice.onrender.com/slider/${slider._id}`, {
+                                        const res = await fetch(`${API_BASE_URL}/slider/${slider._id}`, {
                                           method: "DELETE",
                                           headers: {
                                             Authorization: `Bearer ${token}`,

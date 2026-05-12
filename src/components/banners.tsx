@@ -11,6 +11,7 @@ import { Skeleton } from "./ui/skeleton"
 import { Trash2, Edit } from "lucide-react"
 import DashboardLayout from "./dashboard-layout"
 import { toast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 
 interface Banner {
   _id: string
@@ -36,7 +37,7 @@ export default function BannersPage() {
     const fetchBanners = async (page: number) => {
       try {
         setLoading(true)
-        const response = await fetch(`https://forlandservice.onrender.com/banners?page=${page}&limit=10`, {
+        const response = await fetch(`${API_BASE_URL}/banners?page=${page}&limit=10`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -65,7 +66,7 @@ export default function BannersPage() {
 
     try {
       setDeleting(true)
-      const response = await fetch(`https://forlandservice.onrender.com/banners/${selectedId}`, {
+      const response = await fetch(`${API_BASE_URL}/banners/${selectedId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

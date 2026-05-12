@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Skeleton } from "./ui/skeleton"
 import { useAuth } from "../auth-context"
 import { useToast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 import {
   Dialog,
   DialogTrigger,
@@ -46,7 +47,7 @@ export default function YouTubeVideosTable() {
     const fetchVideos = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/youtube/?page=${currentPage}&limit=${itemsPerPage}`)
+        const res = await fetch(`${API_BASE_URL}/youtube/?page=${currentPage}&limit=${itemsPerPage}`)
 
         if (!res.ok) throw new Error("Failed to fetch YouTube videos")
 
@@ -213,7 +214,7 @@ export default function YouTubeVideosTable() {
                                     onClick={async () => {
                                       setDeleting(true)
                                       try {
-                                        const res = await fetch(`https://forlandservice.onrender.com/youtube/${video._id}`, {
+                                        const res = await fetch(`${API_BASE_URL}/youtube/${video._id}`, {
                                           method: "DELETE",
                                           headers: {
                                             Authorization: `Bearer ${token}`,

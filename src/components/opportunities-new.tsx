@@ -8,6 +8,7 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Textarea } from "./ui/textarea"
 import { FileIcon, SaveIcon } from "lucide-react"
+import { API_BASE_URL } from "../lib/api";
 
 export default function NewOpportunityPage() {
   const navigate = useNavigate()
@@ -30,7 +31,7 @@ export default function NewOpportunityPage() {
     }
   
     try {
-      const res = await fetch("https://forlandservice.onrender.com/opportunities", {
+      const res = await fetch(`${API_BASE_URL}/opportunities`, {
         method: "POST",
         body: formData,
       })

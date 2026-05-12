@@ -15,6 +15,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
 import DashboardLayout from "./dashboard-layout"
 import { useAuth } from "../auth-context"
 import { useToast } from "../hooks/use-toast"
+import { API_BASE_URL } from "../lib/api";
 
 export default function ProfileSettingsPage() {
   const { token, user } = useAuth()
@@ -35,7 +36,7 @@ export default function ProfileSettingsPage() {
       if (!user?.id || !token) return
 
       try {
-        const res = await fetch(`https://forlandservice.onrender.com/users/${user.id}`, {
+        const res = await fetch(`${API_BASE_URL}/users/${user.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -90,7 +91,7 @@ export default function ProfileSettingsPage() {
     }
 
     try {
-      const res = await fetch(`https://forlandservice.onrender.com/users/${user?.id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/${user?.id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
