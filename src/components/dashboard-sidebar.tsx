@@ -260,6 +260,11 @@ export default function DashboardSidebar() {
                               <TruncatedMenuItem text="Institutional Support" />
                             </Link>
                           </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <Link to="/publications?category=forland-findings">
+                              <TruncatedMenuItem text="Findings" />
+                            </Link>
+                          </SidebarMenuSubItem>
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </Collapsible>
