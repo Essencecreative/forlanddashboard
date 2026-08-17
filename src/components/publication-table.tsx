@@ -46,6 +46,7 @@ const categoryOptions = [
   { value: "forland-forms", label: "FORLAND - Forms and Guidelines" },
   { value: "forland-brochure", label: "FORLAND - Brochure & Newsletters" },
   { value: "forland-institutional", label: "FORLAND - Institutional Support" },
+  { value: "forland-findings", label: "FORLAND - Findings" },
 ];
 
 

@@ -183,6 +183,7 @@ export default function NewPublicationPage() {
                       <SelectItem value="forland-forms">FORLAND - Forms and Guidelines</SelectItem>
                       <SelectItem value="forland-brochure">FORLAND - Brochure & Newsletters</SelectItem>
                       <SelectItem value="forland-institutional">FORLAND - Institutional Support</SelectItem>
+                      <SelectItem value="forland-findings">FORLAND - Findings</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
